@@ -1,0 +1,303 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Registered SettleUp user profile containing only display identity and creation timestamp.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Firebase Auth UID",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Public display name shown in groups",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Registered user email address",
+          "minLength": 3,
+          "maxLength": 160,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Account registration timestamp"
+        }
+      },
+      "required": ["uid", "displayName", "email", "createdAt"]
+    },
+    "Group": {
+      "title": "Group",
+      "description": "Shared expense group for trips, flatmates, or college friends.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Group document ID",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "name": {
+          "type": "string",
+          "description": "Group name such as Goa Trip or Flat 402",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "category": {
+          "type": "string",
+          "description": "Group category",
+          "enum": ["Trip", "Home", "Food", "College", "General"],
+          "maxLength": 20
+        },
+        "inviteCode": {
+          "type": "string",
+          "description": "Short alphanumeric invite reference",
+          "minLength": 6,
+          "maxLength": 24,
+          "pattern": "^[A-Z0-9\\-]+$"
+        },
+        "createdBy": {
+          "type": "string",
+          "description": "Creator Firebase Auth UID",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "memberUids": {
+          "type": "array",
+          "description": "Bounded list of member UIDs (max 20)"
+        },
+        "memberEmails": {
+          "type": "array",
+          "description": "Bounded list of lowercase member emails (max 20)"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Group creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Group last update timestamp"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "category",
+        "inviteCode",
+        "createdBy",
+        "memberUids",
+        "memberEmails",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "GroupMember": {
+      "title": "GroupMember",
+      "description": "Member entry inside a specific group.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Member document ID",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "groupId": {
+          "type": "string",
+          "description": "Parent group ID",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "uid": {
+          "type": "string",
+          "description": "Member Firebase UID or empty string while invite is pending",
+          "maxLength": 128
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Lowercase member email",
+          "minLength": 3,
+          "maxLength": 160,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Member display name inside the group",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "role": {
+          "type": "string",
+          "description": "Member role in group",
+          "enum": ["owner", "member"],
+          "maxLength": 16
+        },
+        "addedByUid": {
+          "type": "string",
+          "description": "UID of member who added this entry",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "joinedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp member was added or joined"
+        }
+      },
+      "required": [
+        "id",
+        "groupId",
+        "uid",
+        "email",
+        "displayName",
+        "role",
+        "addedByUid",
+        "joinedAt"
+      ]
+    },
+    "Expense": {
+      "title": "Expense",
+      "description": "Expense or non-cash settlement entry within a group.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Expense document ID",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "groupId": {
+          "type": "string",
+          "description": "Parent group ID",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "type": {
+          "type": "string",
+          "description": "Entry type",
+          "enum": ["expense", "settlement"],
+          "maxLength": 20
+        },
+        "title": {
+          "type": "string",
+          "description": "Expense title or settlement label",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "amount": {
+          "type": "number",
+          "description": "Amount in INR"
+        },
+        "paidByMemberId": {
+          "type": "string",
+          "description": "Member ID of payer",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "paidByName": {
+          "type": "string",
+          "description": "Display name of payer",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "splitType": {
+          "type": "string",
+          "description": "How the expense is split",
+          "enum": ["equal", "exact", "settlement"],
+          "maxLength": 20
+        },
+        "splits": {
+          "type": "object",
+          "description": "Map of memberId to share amount in INR"
+        },
+        "participantIds": {
+          "type": "array",
+          "description": "Bounded list of participating member IDs (max 20)"
+        },
+        "settledToMemberId": {
+          "type": "string",
+          "description": "Recipient member ID for settlements, empty string for expenses",
+          "maxLength": 128
+        },
+        "settledToName": {
+          "type": "string",
+          "description": "Recipient display name for settlements, empty string for expenses",
+          "maxLength": 80
+        },
+        "createdByUid": {
+          "type": "string",
+          "description": "Firebase UID of user who logged the entry",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp"
+        }
+      },
+      "required": [
+        "id",
+        "groupId",
+        "type",
+        "title",
+        "amount",
+        "paidByMemberId",
+        "paidByName",
+        "splitType",
+        "splits",
+        "participantIds",
+        "settledToMemberId",
+        "settledToName",
+        "createdByUid",
+        "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/User"
+      },
+      "description": "Private user profiles readable and writable only by the owning user."
+    },
+    "/groups/{groupId}": {
+      "schema": {
+        "$ref": "#/entities/Group"
+      },
+      "description": "Shared expense groups accessible only to listed members."
+    },
+    "/groups/{groupId}/members/{memberId}": {
+      "schema": {
+        "$ref": "#/entities/GroupMember"
+      },
+      "description": "Group member roster scoped to parent group membership."
+    },
+    "/groups/{groupId}/expenses/{expenseId}": {
+      "schema": {
+        "$ref": "#/entities/Expense"
+      },
+      "description": "Group expenses and settlements scoped to parent group membership."
+    }
+  }
+}

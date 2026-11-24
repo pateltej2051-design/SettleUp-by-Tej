@@ -1,0 +1,8 @@
+{
+  "name": "SettleUp",
+  "description": "Shared expense and bill-splitting platform for friends, flatmates, and college groups with real-time balances and debt simplification.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
